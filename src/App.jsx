@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Main from "./components/Main";
 import Logo from "./components/Logo";
@@ -8,6 +8,9 @@ import Box from "./components/Box";
 import MoviesList from "./components/MoviesList";
 import WatchedSummary from "./components/WatchedSummary";
 import WatchedMovieList from "./components/WatchedMovieList";
+import Loader from "./components/Loader";
+import ErrorMessage from "./components/ErrorMessage";
+import MovieDetails from "./components/MovieDetails";
 
 
 const tempMovieData = [
@@ -57,27 +60,87 @@ const tempWatchedData = [
   },
 ];
 
+const KEY = "f84fc31d";
 
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [query, setQuery] = useState("inception");
+  const [selectedId, setSelectedId] = useState(null);
+
+  function handleSelectMovie(id) {
+    setSelectedId(id === selectedId ? null : id);
+  }
+
+  function handleCloseMovie() {
+    setSelectedId(null);
+  }
+
+  // Using useEffect hook will ensure that the function is called only after the initial render and only ONCE
+  // We can safely use side effects in the render logic now as this will only be called initially
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        setIsLoading(true);
+        setError("");
+        const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
+        if (!res.ok) {
+          throw new Error("Something went wrong while fetching the movies");
+        }
+
+        const data = await res.json();
+        if (data.Response === "False") {
+          setMovies([]);
+          throw new Error("Movie not Found");
+        }
+
+        setMovies(data?.Search);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if (query.length < 3) {
+      setMovies([]);
+      setError("");
+      return;
+    }
+
+    fetchMovies();
+  }, [query]);
+  // The dependency array conisists of states and props on which the useEffect hook uses, 
+  // If any of these states change, The effect is re-rendered
 
   return (
     <>
       <Navbar>
         <Logo />
-        <Search />
+        <Search query={query} onSearch={setQuery} />
         <NumResults movies={movies} />
       </Navbar>
 
       <Main>
         <Box>
-          <MoviesList movies={movies} />
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MoviesList onSelectMovie={handleSelectMovie} movies={movies} />}
+          {!isLoading && error && <ErrorMessage message={error} />}
         </Box>
 
         <Box>
-          <WatchedSummary watched={watched} />
-          <WatchedMovieList watched={watched} />
+          {
+            selectedId ? (
+              <MovieDetails selectedId={selectedId} onCloseMovie={handleCloseMovie} />
+            ) : (
+              <>
+                <WatchedSummary watched={watched} />
+                <WatchedMovieList watched={watched} />
+              </>
+            )
+          }
+
         </Box>
       </Main>
     </>
