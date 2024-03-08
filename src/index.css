@@ -314,6 +314,18 @@ body {
   background-color: var(--color-primary-light);
 }
 
+.btn-add-disabled {
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  border: none;
+  border-radius: 10rem;
+  font-size: 1.4rem;
+  padding: 1rem;
+  font-weight: bold;
+  transition: all 0.3s;
+  opacity: 0.5;
+}
+
 .seconds {
   background-color: var(--color-background-100);
   width: 8rem;

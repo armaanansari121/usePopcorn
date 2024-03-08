@@ -60,14 +60,14 @@ const tempWatchedData = [
   },
 ];
 
-const KEY = "f84fc31d";
+const KEY = "244c6aae";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("inception");
+  const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
   function handleSelectMovie(id) {
@@ -78,14 +78,27 @@ export default function App() {
     setSelectedId(null);
   }
 
+  function handleAddWatched(movie) {
+    setWatched((watched) => [...watched, movie]);
+  }
+
+  function handleDeleteWatched(id) {
+    setWatched(watched => watched.filter(movie => movie.imdbID !== id))
+  }
+
   // Using useEffect hook will ensure that the function is called only after the initial render and only ONCE
   // We can safely use side effects in the render logic now as this will only be called initially
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
         setError("");
-        const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          { signal: controller.signal }
+        );
         if (!res.ok) {
           throw new Error("Something went wrong while fetching the movies");
         }
@@ -96,9 +109,11 @@ export default function App() {
           throw new Error("Movie not Found");
         }
 
-        setMovies(data?.Search);
+        setMovies(data.Search);
+        setError("");
       } catch (err) {
-        setError(err.message);
+        if (err.name !== "AbortError")
+          setError(err.message);
       } finally {
         setIsLoading(false);
       }
@@ -109,10 +124,16 @@ export default function App() {
       return;
     }
 
+    handleCloseMovie();
     fetchMovies();
+
+    return function () {
+      controller.abort();
+    }
   }, [query]);
   // The dependency array conisists of states and props on which the useEffect hook uses, 
   // If any of these states change, The effect is re-rendered
+
 
   return (
     <>
@@ -132,15 +153,19 @@ export default function App() {
         <Box>
           {
             selectedId ? (
-              <MovieDetails selectedId={selectedId} onCloseMovie={handleCloseMovie} />
+              <MovieDetails
+                selectedId={selectedId}
+                onCloseMovie={handleCloseMovie}
+                onAddWatched={handleAddWatched}
+                watched={watched}
+              />
             ) : (
               <>
                 <WatchedSummary watched={watched} />
-                <WatchedMovieList watched={watched} />
+                <WatchedMovieList watched={watched} onDeleteWatched={handleDeleteWatched} />
               </>
             )
           }
-
         </Box>
       </Main>
     </>
