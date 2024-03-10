@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 function WatchedMovie({ movie, onDeleteWatched }) {
   return (
@@ -18,10 +18,15 @@ function WatchedMovie({ movie, onDeleteWatched }) {
           <span>⏳</span>
           <span>{movie.runtime} min</span>
         </p>
-        <button className='btn-delete' onClick={() => onDeleteWatched(movie.imdbID)}>X</button>
+        <button
+          className="btn-delete"
+          onClick={() => onDeleteWatched(movie.imdbID)}
+        >
+          X
+        </button>
       </div>
     </li>
-  )
+  );
 }
 
-export default WatchedMovie
+export default WatchedMovie;

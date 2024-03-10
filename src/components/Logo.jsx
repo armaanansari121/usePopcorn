@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 function Logo() {
   return (
@@ -6,7 +6,7 @@ function Logo() {
       <span role="img">🍿</span>
       <h1>usePopcorn</h1>
     </div>
-  )
+  );
 }
 
-export default Logo
+export default Logo;

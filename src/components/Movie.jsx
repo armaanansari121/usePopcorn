@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 function Movie({ movie, onSelectMovie }) {
   return (
@@ -12,7 +12,7 @@ function Movie({ movie, onSelectMovie }) {
         </p>
       </div>
     </li>
-  )
+  );
 }
 
-export default Movie
+export default Movie;

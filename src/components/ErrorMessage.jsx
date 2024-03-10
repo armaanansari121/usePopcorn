@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
 function ErrorMessage({ message }) {
   return (
-    <p className='error'>
+    <p className="error">
       <span>⛔</span> {message}
     </p>
-  )
+  );
 }
 
-export default ErrorMessage
+export default ErrorMessage;

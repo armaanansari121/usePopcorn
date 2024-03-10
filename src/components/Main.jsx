@@ -1,12 +1,7 @@
-import React, { useState } from 'react'
-
+import React, { useState } from "react";
 
 function Main({ children }) {
-  return (
-    <main className="main">
-      {children}
-    </main>
-  )
+  return <main className="main">{children}</main>;
 }
 
-export default Main
+export default Main;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -30,7 +30,7 @@ function WatchedSummary({ watched }) {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
-export default WatchedSummary
+export default WatchedSummary;
