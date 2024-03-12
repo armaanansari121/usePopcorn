@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const KEY = "244c6aae";
 
-export function useMovieDetails(selectedId, setUserRating) {
+export function useMovieDetails(selectedId) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -12,7 +12,6 @@ export function useMovieDetails(selectedId, setUserRating) {
       try {
         setIsLoading(true);
         setError("");
-        setUserRating(0);
 
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`

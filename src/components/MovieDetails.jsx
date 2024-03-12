@@ -7,10 +7,7 @@ import { useMovieDetails } from "../hooks/useMovieDetails";
 
 function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   const [userRating, setUserRating] = useState(0);
-  const { movie, isLoading, error } = useMovieDetails(
-    selectedId,
-    setUserRating
-  );
+  const { movie, isLoading, error } = useMovieDetails(selectedId);
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
   const isRated = userRating ? true : false;
   const watchedUserRating = watched.find(
